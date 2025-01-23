@@ -1,0 +1,168 @@
+{
+  "info": {
+    "title": "CRM System API",
+    "version": "1.0.0",
+    "description": "API documentation for the CRM system backend."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "John Doe" },
+                  "email": { "type": "string", "example": "john.doe@example.com" },
+                  "password": { "type": "string", "example": "password123" }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "User registered successfully" },
+            "400": { "description": "Validation error" },
+            "500": { "description": "Server error" }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Log in a user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "john.doe@example.com" },
+                  "password": { "type": "string", "example": "password123" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Login successful, returns JWT token" },
+            "401": { "description": "Invalid credentials" },
+            "500": { "description": "Server error" }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "post": {
+        "summary": "Create a new customer",
+        "tags": ["Customers"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Acme Corp" },
+                  "email": { "type": "string", "example": "contact@acme.com" },
+                  "phone": { "type": "string", "example": "123-456-7890" },
+                  "company": { "type": "string", "example": "Acme Corp" }
+                },
+                "required": ["name", "email", "phone"]
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Customer created successfully" },
+            "400": { "description": "Validation error" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a list of customers",
+        "tags": ["Customers"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "name", "in": "query", "schema": { "type": "string" }, "description": "Filter by name" },
+          { "name": "email", "in": "query", "schema": { "type": "string" }, "description": "Filter by email" },
+          { "name": "phone", "in": "query", "schema": { "type": "string" }, "description": "Filter by phone" },
+          { "name": "company", "in": "query", "schema": { "type": "string" }, "description": "Filter by company" },
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 }, "description": "Page number for pagination" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 }, "description": "Number of results per page" }
+        ],
+        "responses": {
+          "200": { "description": "List of customers" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/customers/{id}": {
+      "put": {
+        "summary": "Update a customer",
+        "tags": ["Customers"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Customer ID" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Acme Corp Updated" },
+                  "email": { "type": "string", "example": "updated@acme.com" },
+                  "phone": { "type": "string", "example": "123-456-7890" },
+                  "company": { "type": "string", "example": "Acme Corp Updated" }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Customer updated successfully" },
+            "400": { "description": "Validation error" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a customer",
+        "tags": ["Customers"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" }, "description": "Customer ID" }
+        ],
+        "responses": {
+          "200": { "description": "Customer deleted successfully" },
+          "400": { "description": "Validation error" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
